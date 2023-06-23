@@ -3,6 +3,14 @@ import { AiFillEye, AiFillEyeInvisible } from "react-icons/ai";
 import { Link } from "react-router-dom";
 import OAuth from "../components/OAuth";
 
+import {getAuth, createUserWithEmailAndPassword,
+updateProfile} from 'firebase/auth';
+import {db} from '../firebase';
+import { setDoc, doc, serverTimestamp } from "firebase/firestore";
+import { useNavigate } from "react-router-dom";
+import {toast } from 'react-toastify';
+
+
 export default function SignUp() {
   const [showPassword, setShowPassword] = useState(false);
 
@@ -13,12 +21,49 @@ export default function SignUp() {
   });
 
   const { name, email, password } = formData;
+  const navigate = useNavigate();
+
   function onChange(e) {
     setFormData((prevState) => ({
       ...prevState,
       [e.target.id]: e.target.value,
     }));
   }
+
+ const onSubmit = async (e) => {
+    e.preventDefault();
+
+    try {
+      //khởi tạo đăng kí = email + password
+      const auth = getAuth();
+      const userCredential = await createUserWithEmailAndPassword(auth, 
+        email, password);
+      
+      //updateProfile -> display name
+      updateProfile(auth.currentUser, {
+        displayName: name,
+      })
+
+      const user = userCredential.user;
+
+      //xóa password khỏi formData
+      const formDataCopy = {...formData};
+      delete formDataCopy.password;
+      formDataCopy.timestamp = serverTimestamp();
+
+      //tạo dữ liệu trong firestore Database
+      await setDoc(doc(db, "users", user.uid),
+      formDataCopy);
+
+      toast.success('Sign up successfully!');
+      navigate('/');
+  
+    } catch (error) {
+      toast.error("Something went wrong with the registration!")
+    }
+  }
+
+
   return (
     <section>
       <h1 className="text-3xl text-center mt-6 font-bold">Sign Up</h1>
@@ -38,7 +83,7 @@ export default function SignUp() {
 
         {/* FORM ================================= */}
         <div className="w-full md:w-[67%] lg:w-[40%] lg:ml-20">
-          <form>
+          <form onSubmit={onSubmit}>
              {/* NAME ------------- */}
              <input
               className="w-full px-4 py-2 text-xl text-gray-700 bg-white
