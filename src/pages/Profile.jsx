@@ -37,7 +37,8 @@ export default function Profile() {
         });
 
         //update name in the firestore
-        const docRef = doc(db, "users", auth.currentUser.uid);
+        const docRef = 
+        doc(db, "users", auth.currentUser.uid);
         await updateDoc(docRef, {
           name,
         });
@@ -76,7 +77,7 @@ export default function Profile() {
               type="text"
               id="email"
               value={email}
-              disabled={!changeDetail}
+              disabled
               onChange={onChange}
             />
 
