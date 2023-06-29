@@ -52,8 +52,7 @@ export default function SignUp() {
       formDataCopy.timestamp = serverTimestamp();
 
       //tạo dữ liệu trong firestore Database
-      await setDoc(doc(db, "users", user.uid),
-      formDataCopy);
+      await setDoc(doc(db, "users", user.uid),formDataCopy);
 
       toast.success('Sign up successfully!');
       navigate('/');
