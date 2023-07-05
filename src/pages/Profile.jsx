@@ -5,6 +5,7 @@ import { toast } from "react-toastify";
 import { db } from "../firebase";
 import {
   collection,
+  deleteDoc,
   doc,
   getDocs,
   orderBy,
@@ -15,6 +16,7 @@ import {
 import { FcHome } from "react-icons/fc";
 import { Link } from "react-router-dom";
 import ListingItem from "../components/ListingItem";
+
 
 export default function Profile() {
   const [changeDetail, setChangeDetail] = useState(false);
@@ -82,6 +84,21 @@ export default function Profile() {
     }
     fetchUserListing();
   }, [auth.currentUser.uid]);
+
+  const onDelete = async (listingID) => {
+    if(window.confirm("Are you sure you want to delete?")){
+      await deleteDoc(doc(db,'listings', listingID))
+      const updatedListings = listings.filter(
+        (listing) => listing.id !== listingID
+      );
+      setListings(updatedListings);
+      toast.success('Successfully deleted!')
+    }
+  }
+
+  const onEdit = (listingID) =>{
+    navigate(`/edit-listing/${listingID}`);
+  }
 
   return (
     <div>
@@ -179,6 +196,8 @@ export default function Profile() {
                   key={listing.id}
                   id={listing.id}
                   listing={listing.data}
+                  onDelete={()=>onDelete(listing.id)}
+                  onEdit={()=>onEdit(listing.id)}
                 />
               ))}
             </ul>
