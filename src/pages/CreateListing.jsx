@@ -9,10 +9,9 @@ import {db} from '../firebase';
 import { useNavigate } from "react-router";
 
 export default function CreateListing() {
-    const navigate = useNavigate();
+  const navigate = useNavigate();
   const auth = getAuth();
   const [geoLocationEnabled, setGeoLocationEnabled] = useState(true);
-
   const [loading, setLoading] = useState(false);
 
   const [formData, setFormData] = useState({
@@ -51,6 +50,7 @@ export default function CreateListing() {
 
   const onChange = (e) => {
     let boolean = null;
+    //true-false
     if (e.target.value === "true") {
       boolean = true;
     }

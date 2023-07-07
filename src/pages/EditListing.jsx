@@ -62,11 +62,13 @@ export default function EditListing() {
     }
   },[auth.currentUser.uid, listing, navigate]);
 
+
   //fetch data
   useEffect(() =>{
     setLoading(true);
     const fetchListing = async()=>{
-        const docRef = doc(db, 'listings', params.listingId);
+        const docRef = 
+        doc(db, 'listings', params.listingId);
         const docSnap = await getDoc(docRef);
         if(docSnap.exists()){
             setListing(docSnap.data());
@@ -211,8 +213,10 @@ export default function EditListing() {
     !formDataCopy.offer && delete formDataCopy.discountedPrice;
     delete formDataCopy.latitude;
     delete formDataCopy.longitude;
+
     const docRef = doc(db, 'listings', params.listingId);
     await updateDoc(docRef, formDataCopy);
+    
     setLoading(false);
     toast.success('The Listing edited!');
     navigate(`/category/${formDataCopy.type}/${docRef.id}`);
