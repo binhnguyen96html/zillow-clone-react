@@ -145,7 +145,7 @@ export default function Home() {
             <h2 className="px-3 text-2xl mt-6 font-semibold">
               Places for Rent
             </h2>
-            <Link to="/offers">
+            <Link to="/category/rent">
               <p
                 className="px-3 text-sm text-blue-600
               hover:text-blue-800
@@ -176,7 +176,7 @@ export default function Home() {
             <h2 className="px-3 text-2xl mt-6 font-semibold">
               Places for Sale
             </h2>
-            <Link to="/offers">
+            <Link to="/category/sale">
               <p
                 className="px-3 text-sm text-blue-600
               hover:text-blue-800
