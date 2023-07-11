@@ -17,6 +17,7 @@ import {
 } from "react-icons/fa";
 import { getAuth } from "firebase/auth";
 import Contact from "../components/Contact";
+import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 
 export default function Listing() {
   const auth = getAuth();
@@ -25,6 +26,7 @@ export default function Listing() {
   const [loading, setLoading] = useState(true);
   const [shareLinkCopy, setShareLinkCopy] = useState(false);
   const [contactLandlord, setContactLandlord] = useState(false);
+  const [expanded, setExpanded] = useState(false);
 
   SwiperCore.use([Autoplay, Navigation, Pagination]);
 
@@ -95,6 +97,7 @@ export default function Listing() {
         </p>
       )}
 
+
       {/* INFO DETAIL  */}
       <div
         className="m-4 p-4 rounded-lg
@@ -156,11 +159,25 @@ export default function Listing() {
           </div>
 
           {/* DESCRIPTION  */}
-          <p className="mt-3 mb-3">
-            <span className="font-semibold">Description</span> -{" "}
-            {listing.description}
-          </p>
+          <div
+            className={`mt-6 mb-6 pr-3
+          text-sm
+          ${!expanded ? "&& h-[85px]" : ""}
+          transition duration-600 ease-in-out
+          `}
+          >
+            <p className={`leading-5 ${!expanded && 'line-clamp-3'}`}>
+              <span className="font-semibold">Description</span> -{" "}
+              {listing.description}
+            </p>
+            <p
+            className="font-semibold mt-2 text-md
+            cursor-pointer hover:text-red-700"
+            onClick={()=>setExpanded(!expanded)}
+            >{!expanded ? "Expand more" : "Hide"}</p>
+          </div>
 
+          
           {/* ICON  */}
           <ul
             className="flex mb-6
@@ -186,7 +203,8 @@ export default function Listing() {
           </ul>
 
           {/* BUTTON  */}
-          {listing.userRef !== auth.currentUser?.uid && !contactLandlord && (
+          {listing.userRef 
+          !== auth.currentUser?.uid && !contactLandlord && (
             <div className="mt-6">
               <button
                 className="px-7 py-3 w-full
@@ -202,16 +220,38 @@ export default function Listing() {
           )}
 
           {contactLandlord && (
-            <Contact userRef={listing.userRef} listing={listing} />
+            <Contact 
+            userRef={listing.userRef} 
+            listing={listing} />
           )}
         </div>
 
         {/* MAP  */}
         <div
-          className="bg-violet-300
-            w-full h-[200px] lg-[400px]
-            z-10 overflow-x-hidden"
-        ></div>
+          className="bg-violet-300 mt-6 
+          md:mt-0 md:ml-2
+            w-full h-[200px] md:h-[400px]
+            z-10 overflow-x-hidden "
+        >
+          <MapContainer
+            center={[listing.geoLocation.lat, listing.geoLocation.lng]}
+            zoom={13}
+            scrollWheelZoom={false}
+            style={{ height: "100%", width: "100%" }}
+          >
+            <TileLayer
+              attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+            />
+            <Marker
+              position={[listing.geoLocation.lat, listing.geoLocation.lng]}
+            >
+              <Popup>
+                A pretty CSS3 popup. <br /> Easily customizable.
+              </Popup>
+            </Marker>
+          </MapContainer>
+        </div>
       </div>
     </main>
   );
